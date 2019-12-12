@@ -35,8 +35,9 @@ namespace ConsoleAppFileProcessor
                             Console.WriteLine("Task {0} begins and waits for the semaphore.", Task.CurrentId);
                             semaphore.Wait();
                             Console.WriteLine("Task {0} enters the semaphore.", Task.CurrentId);
+                            //add in the colection the file name and the content of file
+                            collection.Add(fileName);
                             ReadFile(fileName);
-
                             Console.WriteLine("Task {0} releases the semaphore; previous count: {1}.", Task.CurrentId, semaphore.Release());
                         });
                     }
