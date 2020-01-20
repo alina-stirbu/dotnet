@@ -14,6 +14,7 @@ namespace HotelApp.API.Controllers
     using Microsoft.Extensions.Logging;
     using Model.Room;
     using Model.Hotel;
+    using AutoMapper.QueryableExtensions;
 
     [Route("api/hotel/{hotelId}/room")]
     [ApiController]
@@ -51,7 +52,7 @@ namespace HotelApp.API.Controllers
         }
 
         [HttpGet("")]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms(int hotelId)
+        public async Task<ActionResult<IEnumerable<RoomResource>>> GetRooms(int hotelId)
         {
             this._logger.LogInformation("RoomController-GetRooms hit");
 
@@ -59,8 +60,9 @@ namespace HotelApp.API.Controllers
                 .Include(h => h.Hotel)
                 .Where(h => h.Hotel.Id == hotelId)
                 .ToListAsync();
-            return list;
-            //return list.Select(r => this._mapper.Map<RoomResource>(r));
+
+            var data = list.Select(r => this._mapper.Map<RoomResource>(r));
+            return Ok(data);
         }
         [HttpGet("{id}")]
         //[ResponseCache(VaryByQueryKeys = new[] { "id" }, Duration = 30)]

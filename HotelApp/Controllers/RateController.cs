@@ -50,7 +50,7 @@ namespace HotelApp.API.Controllers
         }
 
         [HttpGet("")]
-        public async Task<ActionResult<IEnumerable<Rate>>> GetRates(int roomId)
+        public async Task<ActionResult<IEnumerable<RateResource>>> GetRates(int roomId)
         {
             this._logger.LogInformation("RatesController-GetRates hit");
 
@@ -59,7 +59,8 @@ namespace HotelApp.API.Controllers
                 .Where(r => r.Room.Id == roomId)
                 .ToListAsync();
 
-            return list;
+            var data = list.Select(r => this._mapper.Map<RateResource>(r));
+            return Ok(data);
         }
         [HttpGet("{id}")]
         //[ResponseCache(VaryByQueryKeys = new[] { "id" }, Duration = 30)]

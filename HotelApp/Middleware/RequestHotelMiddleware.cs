@@ -17,7 +17,7 @@ namespace HotelApp.API.Middleware
             this.next = next;
         }
 
-        public async Task Invoke(HttpContext context, ILogger logger)
+        public async Task Invoke(HttpContext context, ILogger<RequestHotelMiddleware> logger)
         {
             var date = DateTime.Now;
             logger.LogInformation($"Handling request: {context.Request.Method} {context.Request.Path}");

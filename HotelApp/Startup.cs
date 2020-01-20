@@ -16,6 +16,7 @@ namespace HotelApp
 {
     using API.Middleware;
     using AutoMapper;
+    using HotelApp.API.Helpers;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.OpenApi.Models;
 
@@ -35,10 +36,7 @@ namespace HotelApp
 
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotels API", Version = "v1" });
-            });
+            services.AddSwaggerDocumentation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,9 +45,7 @@ namespace HotelApp
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/error-local-development");
-                app.UseSwagger();
-
-                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotels API V1"); });
+                app.UseSwaggerDocumentation();
             }
             else
             {
@@ -62,7 +58,7 @@ namespace HotelApp
 
             app.UseAuthorization();
 
-            //app.UseMiddleware<RequestHotelMiddleware>();
+            app.UseMiddleware<RequestHotelMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
