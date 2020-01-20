@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace HotelApp.Model.Rate
+{
+    using System.ComponentModel.DataAnnotations;
+
+        public class RateResource
+    {
+        public int Id { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string Currency { get; set; }
+        [Required]
+        public DateTime Day { get; set; }
+    }
+}
