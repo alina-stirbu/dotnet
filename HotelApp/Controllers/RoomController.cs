@@ -13,8 +13,9 @@ namespace HotelApp.API.Controllers
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using Model.Room;
+    using Model.Hotel;
 
-    [Route("api/[controller]")]
+    [Route("api/hotel/{hotelId}/room")]
     [ApiController]
     public class RoomController : ControllerBase
     {
@@ -30,27 +31,40 @@ namespace HotelApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Room>> Post(CreateRoomResource model)
+        public async Task<ActionResult<Room>> Post(int hotelId, CreateRoomResource model)
         {
             //map model to entity
+            var hotel = await this._context.Hotels.FindAsync(hotelId);
+
+            if (hotel == null)
+            {
+                return this.NotFound();
+            }
+
             var entity = this._mapper.Map<Room>(model);
+            entity.Hotel = hotel;
             this._context.Rooms.Add(entity);
 
             await this._context.SaveChangesAsync();
 
-            return this.CreatedAtAction("Get", new { id = entity.Id }, this._mapper.Map<RoomResource>(entity));
+            return this.CreatedAtAction("Get", new { hotelId, id = entity.Id }, this._mapper.Map<RoomResource>(entity));
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        [HttpGet("")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRooms(int hotelId)
         {
             this._logger.LogInformation("RoomController-GetRooms hit");
 
-            return await this._context.Rooms.ToListAsync();
+            var list = await this._context.Rooms
+                .Include(h => h.Hotel)
+                .Where(h => h.Hotel.Id == hotelId)
+                .ToListAsync();
+            return list;
+            //return list.Select(r => this._mapper.Map<RoomResource>(r));
         }
         [HttpGet("{id}")]
         //[ResponseCache(VaryByQueryKeys = new[] { "id" }, Duration = 30)]
-        public async Task<ActionResult<RoomResource>> Get(int id)
+        public async Task<ActionResult<RoomResource>> Get(int hotelId, int id)
         {
             if (id < 0)
             {
@@ -69,7 +83,7 @@ namespace HotelApp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, UpdateRoomResource model)
+        public async Task<IActionResult> Put(int hotelId, int id, UpdateRoomResource model)
         {
             var entity = await this._context.Rooms.FindAsync(id);
             if (entity == null)
@@ -87,7 +101,7 @@ namespace HotelApp.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Room>> Delete(int id)
+        public async Task<ActionResult<Room>> Delete(int hotelId, int id)
         {
             var room = await this._context.Rooms.FindAsync(id);
             if (room == null)

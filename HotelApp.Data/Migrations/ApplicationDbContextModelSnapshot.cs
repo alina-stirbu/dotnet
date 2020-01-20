@@ -95,7 +95,7 @@ namespace HotelApp.Data.Migrations
 
             modelBuilder.Entity("HotelApp.Data.Entities.Rate", b =>
                 {
-                    b.HasOne("HotelApp.Data.Entities.Room", null)
+                    b.HasOne("HotelApp.Data.Entities.Room", "Room")
                         .WithMany("Rates")
                         .HasForeignKey("RoomId");
                 });

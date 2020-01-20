@@ -15,7 +15,7 @@ namespace HotelApp.API.Controllers
     using Model.Hotel;
 
     [ApiController]
-    [Route("api/hotels")]
+    [Route("api/hotel")]
     public class HotelController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

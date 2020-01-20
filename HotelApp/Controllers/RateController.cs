@@ -14,7 +14,7 @@ namespace HotelApp.API.Controllers
     using Microsoft.Extensions.Logging;
     using Model.Rate;
 
-    [Route("api/[controller]")]
+    [Route("api/room/{roomId}/rate")]
     [ApiController]
     public class RateController : ControllerBase
     {
@@ -30,27 +30,40 @@ namespace HotelApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Rate>> Post(CreateRateResource model)
+        public async Task<ActionResult<Rate>> Post(int roomId, CreateRateResource model)
         {
             //map model to entity
+            var room = await this._context.Rooms.FindAsync(roomId);
+
+            if (room == null)
+            {
+                return this.NotFound();
+            }
+
             var entity = this._mapper.Map<Rate>(model);
+            entity.Room = room;
             this._context.Rates.Add(entity);
 
             await this._context.SaveChangesAsync();
 
-            return this.CreatedAtAction("Get", new { id = entity.Id }, this._mapper.Map<RateResource>(entity));
+            return this.CreatedAtAction("Get", new {roomId, id = entity.Id }, this._mapper.Map<RateResource>(entity));
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rate>>> GetRates()
+        [HttpGet("")]
+        public async Task<ActionResult<IEnumerable<Rate>>> GetRates(int roomId)
         {
             this._logger.LogInformation("RatesController-GetRates hit");
 
-            return await this._context.Rates.ToListAsync();
+            var list = await this._context.Rates
+                .Include(r => r.Room)
+                .Where(r => r.Room.Id == roomId)
+                .ToListAsync();
+
+            return list;
         }
         [HttpGet("{id}")]
         //[ResponseCache(VaryByQueryKeys = new[] { "id" }, Duration = 30)]
-        public async Task<ActionResult<RateResource>> Get(int id)
+        public async Task<ActionResult<RateResource>> Get(int roomId, int id)
         {
             if (id < 0)
             {

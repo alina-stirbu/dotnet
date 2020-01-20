@@ -16,5 +16,7 @@ namespace HotelApp.Data.Entities
         [Required]
         public DateTime Day { get; set; }
 
+        public Room Room { get; set; }
+
     }
 }
