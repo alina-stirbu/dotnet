@@ -25,6 +25,8 @@ namespace HotelApp.API.Helpers
 
             CreateMap<Rate, RateResource>();
             CreateMap<CreateRateResource, Rate>();
+
+            CreateMap<User, Model.User.UserWithoutPasswordResource>();
         }
     }
 }

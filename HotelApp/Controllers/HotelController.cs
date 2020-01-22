@@ -11,11 +11,13 @@ namespace HotelApp.API.Controllers
     using AutoMapper;
     using Data;
     using Data.Entities;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.EntityFrameworkCore;
     using Model.Hotel;
 
     [ApiController]
     [Route("api/hotel")]
+    [Authorize]
     public class HotelController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

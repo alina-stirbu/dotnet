@@ -13,6 +13,7 @@ namespace HotelApp
     {
         public static void Main(string[] args)
         {
+            Console.Title = "Hotel API";
             CreateHostBuilder(args).Build().Run();
         }
 
