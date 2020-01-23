@@ -66,18 +66,20 @@ namespace HotelApp
             });
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
-
-            /*services.AddAuthentication("Bearer")
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-
-                    options.Audience = "api1";
-                });*/
                 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerDocumentation();
+
+            services.AddResponseCaching();
+
+            services.AddMemoryCache();
+
+            //add redis cache
+            services.AddDistributedRedisCache(option =>
+            {
+                option.Configuration = "127.0.0.1";
+                option.InstanceName = "master";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,6 +94,7 @@ namespace HotelApp
             {
                 app.UseExceptionHandler("/error");
             }
+            app.UseResponseCaching();
 
             app.UseHttpsRedirection();
 
